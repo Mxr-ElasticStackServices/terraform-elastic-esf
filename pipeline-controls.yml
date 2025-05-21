@@ -1,0 +1,213 @@
+pipeline_controls_version: '1.0'
+build:
+  api_version: '1.0'
+#   builds:
+#    deploy_bundle:
+#      properties:
+#        images:
+#          - 'docker.artpro.digitalglobe.com:443/beats/filebeat:7.17.5'
+#          - 'docker.artpro.digitalglobe.com:443/beats/metricbeat:7.17.5'
+config:
+  build_type: 'no_build'
+  docker:
+    certs:
+      skipInjection: false # Disabled cert injection for ALL of your images
+    excludeImages:
+      # - 'library/busybox:latest'
+      # - 'elasticsearch/elasticsearch:8.17.3'
+      # - 'kibana/kibana:8.17.3'
+      # - 'apm/apm-server:8.17.3'
+      # - 'beats/elastic-agent:8.15.2'
+      # - 'beats/filebeat:8.15.2'
+      # - 'beats/metricbeat:8.15.2'
+  terraform:
+    skip: false
+    root: 'tf'
+    short_name: 'ess'
+    service: 'elastic-stack-services'
+    access_groups:
+    - 'elastic_ar'
+controls:
+  files:
+    notifications:
+      path: pipeline-notifications.yml
+deploy:
+  properties:
+    enableValuesInterpolation: true
+    force: false
+    helmVersion: '3'
+    namespace: elastic
+    valuesDirectory: values
+    runTests: false
+    helmTimeout: 300
+    # charts:
+    #   elasticstack-mon:
+    #     path: es-kibana-helm-mon
+    #   elasticstack-nonprod:
+    #     path: es-kibana-helm-nonprod
+  deploys:
+    int:
+      active: false
+      targets:
+        essdev-k8s-commercial-dev:
+          active: false
+          properties:
+            charts:
+              elasticstack-mon:
+                active: true
+                path: es-kibana-helm-mon
+                name: elasticstack-mon
+                appendNamespace: false
+                values:
+                - values/envs/int/commercial/values_mon.yaml
+              elasticstack-nonprod:
+                active: true
+                path: es-kibana-helm-nonprod
+                name: elasticstack-nonprod
+                appendNamespace: false
+                values:
+                - values/envs/int/commercial/values_nonprod.yaml
+              elasticstack-prod:
+                active: false
+                path: es-kibana-helm-prod
+                name: elasticstack-prod
+                appendNamespace: false
+                values:
+                - values/envs/int/commercial/values_prod.yaml
+    # shared-services:
+    #   targets:
+    #     ess-k8s-commercial-shared-services:
+    #       active: false
+    #       properties:
+    #         charts:
+    #           elasticstack-mon:
+    #             active: false
+    #             path: es-kibana-helm-mon
+    #             name: elasticstack-mon
+    #             appendNamespace: false
+    #             values:
+    #               - values/envs/sharedservices/commercial/values_mon.yaml
+    #           elasticstack-nonprod:
+    #             active: false
+    #             path: es-kibana-helm-nonprod
+    #             name: elasticstack-nonprod
+    #             appendNamespace: false
+    #             values:
+    #               - values/envs/sharedservices/commercial/values_nonprod.yaml
+    #           elasticstack-prod:
+    #             active: false
+    #             path: es-kibana-helm-prod
+    #             name: elasticstack-prod
+    #             appendNamespace: false
+    #             values:
+    #               - values/envs/sharedservices/commercial/values_prod.yaml
+    #     ess-k8s-govcloud-shared-services:
+    #       active: false
+    #       properties:
+    #         charts:
+    #           elasticstack-mon:
+    #             active: false
+    #             path: es-kibana-helm-mon
+    #             name: elasticstack-mon
+    #             appendNamespace: false
+    #             values:
+    #               - values/envs/sharedservices/govcloud/values_mon.yaml
+    #           elasticstack-nonprod:
+    #             active: false
+    #             path: es-kibana-helm-nonprod
+    #             name: elasticstack-nonprod
+    #             appendNamespace: false
+    #             values:
+    #               - values/envs/sharedservices/govcloud/values_nonprod.yaml
+    #           elasticstack-prod:
+    #             active: false
+    #             path: es-kibana-helm-prod
+    #             name: elasticstack-prod
+    #             appendNamespace: false
+    #             values:
+    #               - values/envs/sharedservices/govcloud/values_prod.yaml
+    #     ess-k8s-sc2s-shared-services:
+    #       active: true
+    #       properties:
+    #         charts:
+    #           elasticstack-mon:
+    #             active: false
+    #             sort: 0
+    #             path: es-kibana-helm-mon
+    #             name: elasticstack-mon
+    #             appendNamespace: false
+    #             values:
+    #               - values/envs/sharedservices/sc2s/values_mon.yaml
+    #           elasticstack-nonprod:
+    #             active: true
+    #             sort: 1
+    #             path: es-kibana-helm-nonprod
+    #             name: elasticstack-nonprod
+    #             appendNamespace: false
+    #             values:
+    #               - values/envs/sharedservices/sc2s/values_nonprod.yaml
+    #           elasticstack-prod:
+    #             active: true
+    #             sort: 2
+    #             path: es-kibana-helm-prod
+    #             name: elasticstack-prod
+    #             appendNamespace: false
+    #             values:
+    #               - values/envs/sharedservices/sc2s/values_prod.yaml
+    #     ess-k8s-v3r-shared-services:
+    #     #There will be no prod in v3r
+    #       active: false
+    #       properties:
+    #         charts:
+    #           elasticstack-mon:
+    #             active: false
+    #             sort: 0
+    #             path: es-kibana-helm-mon
+    #             name: elasticstack-mon
+    #             appendNamespace: false
+    #             values:
+    #               - values/envs/sharedservices/v3r/values_mon.yaml
+    #           elasticstack-nonprod:
+    #             active: true
+    #             sort: 1
+    #             path: es-kibana-helm-nonprod
+    #             name: elasticstack-nonprod
+    #             appendNamespace: false
+    #             values:
+    #               - values/envs/sharedservices/v3r/values_nonprod.yaml
+    #
+    # Load some extra variables from all sorts of different places
+    #
+variables:
+  sources:
+    sharedservices-commercial:
+      type: 'github_file'
+      org: 'Mxr-ElasticStackServices'
+      repo: 'configs'
+      branch: 'main'
+      path: 'the-stack/configs.yml'
+      clientId: 'github-com'
+      # Load for commerical
+      filter:
+        partition:
+        - 'commercial'
+    # sc2s:
+    #   type: 'gitlab_file'
+    #   org: 'mx-elastic-stack-services'
+    #   repo: 'configs'
+    #   branch: 'main'
+    #   path: 'the-stack/configs.yml'
+    #   # Load for sc2s
+    #   filter:
+    #     partition:
+    #     - 'sc2s'
+    # v3r:
+    #   type: 'gitlab_file'
+    #   org: 'Mxr-ElasticStackServices'
+    #   repo: 'configs'
+    #   branch: 'main'
+    #   path: 'the-stack/configs.yml'
+    #   # Load for sc2s
+    #   filter:
+    #     partition:
+    #     - 'v3r'

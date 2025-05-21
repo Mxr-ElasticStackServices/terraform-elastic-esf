@@ -1,0 +1,10 @@
+name: terraform-elastic-esf
+description: TBD
+source: https://gitub.com/Mxr-ElasticStackServices/terraform-elastic-esf
+team: Elastic Stack Services
+data_classification:
+- company_proprietary
+
+poc:
+- name: Elastic Stack Services
+  email: DL-IT-ElasticStackServices@digitalglobe.com
