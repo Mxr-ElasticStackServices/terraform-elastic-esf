@@ -13,7 +13,7 @@ locals {
   attach_network_policy = (var.vpc != null ? true : false)
 
   config-bucket-name = var.config-file-bucket == "" ? (
-    "${var.lambda-name}-config-bucket"
+    "${var.service-shortname}-${var.environment}-config-bucket"
     ) : (
     split(":", var.config-file-bucket)[length(split(":", var.config-file-bucket)) - 1]
   )
@@ -124,6 +124,20 @@ locals {
     minor = tonumber(local.release-version-unpacked[1])
     patch = tonumber(local.release-version-unpacked[2])
   }
+
+  # Select Lambda runtime based on release-version
+  #
+  # - If the major version is less than 1, use python3.9.
+  # - If the major version is 1 and the minor version is less than 20, use python3.9.
+  # - Otherwise, use python3.12.
+  #
+  lambda_runtime = (
+    local.release-version-parts.major < 1 ||
+    (
+      local.release-version-parts.major == 1 &&
+      local.release-version-parts.minor < 20
+    )
+  ) ? "python3.9" : "python3.12"
 }
 
 check "esf-release" {
@@ -145,6 +159,32 @@ resource "aws_s3_bucket" "esf-config-bucket" {
 
   bucket        = local.config-bucket-name
   force_destroy = true
+  tags = var.tags
+}
+
+resource "aws_s3_bucket_acl" "bucket_acl" {
+  bucket = aws_s3_bucket.esf-config-bucket[0].id 
+  acl    = "private"
+}
+
+resource "aws_s3_bucket_logging" "bucket_logging" {
+  bucket = aws_s3_bucket.esf-config-bucket[0].id  # The bucket you want to log (source bucket)
+
+  target_bucket = data.aws_s3_bucket.s3_logging_bucket.id 
+
+  target_prefix = "s3/${aws_s3_bucket.esf-config-bucket[0].id}/" 
+}
+
+resource "aws_s3_bucket_public_access_block" "public_access_block" {
+  bucket = aws_s3_bucket.esf-config-bucket[0].id
+  block_public_acls       = true  
+  ignore_public_acls      = true  
+  block_public_policy     = true  
+  restrict_public_buckets = true 
+}
+
+data "aws_s3_bucket" "s3_logging_bucket" {
+  bucket = "mxr-gov-aws-access-logs-bucket-${var.aws_account_id}-${var.aws_region}"
 }
 
 resource "aws_s3_object" "config-file" {
@@ -158,6 +198,12 @@ resource "aws_s3_object" "config-file" {
 resource "terraform_data" "curl-dependencies-zip" {
   provisioner "local-exec" {
     command = "curl -L -O ${local.dependencies-bucket-url}/${local.dependencies-file}"
+  }
+}
+
+resource "terraform_data" "combine-yaml" {
+  provisioner "local-exec" {
+    command = "./combine.sh"
   }
 }
 
@@ -176,7 +222,7 @@ module "esf-lambda-function" {
 
   function_name = var.lambda-name
   handler       = "main_aws.lambda_handler"
-  runtime       = "python3.9"
+  runtime       = local.lambda_runtime
   architectures = ["x86_64"]
   timeout       = var.lambda-timeout
 
@@ -290,10 +336,11 @@ resource "aws_lambda_event_source_mapping" "esf-event-source-mapping-continuing-
 }
 
 resource "aws_sqs_queue" "esf-continuing-queue-dlq" {
-  name                       = "${var.lambda-name}-continuing-queue-dlq"
+  name                       = "${var.service-shortname}-${var.environment}-continuing-queue-dlq"
   delay_seconds              = 0
   sqs_managed_sse_enabled    = true
   visibility_timeout_seconds = 910
+  tags = var.tags
 }
 
 resource "aws_sqs_queue_redrive_allow_policy" "esf-continuing-queue-dlq-redrive-allow-policy" {
@@ -306,7 +353,7 @@ resource "aws_sqs_queue_redrive_allow_policy" "esf-continuing-queue-dlq-redrive-
 }
 
 resource "aws_sqs_queue" "esf-continuing-queue" {
-  name                       = "${var.lambda-name}-continuing-queue"
+  name                       = "${var.service-shortname}-${var.environment}-continuing-queue"
   delay_seconds              = 0
   sqs_managed_sse_enabled    = true
   visibility_timeout_seconds = 910
@@ -314,13 +361,15 @@ resource "aws_sqs_queue" "esf-continuing-queue" {
     deadLetterTargetArn = aws_sqs_queue.esf-continuing-queue-dlq.arn
     maxReceiveCount     = 3
   })
+  tags = var.tags
 }
 
 resource "aws_sqs_queue" "esf-replay-queue-dlq" {
-  name                       = "${var.lambda-name}-replay-queue-dlq"
+  name                       = "${var.service-shortname}-${var.environment}-replay-queue-dlq"
   delay_seconds              = 0
   sqs_managed_sse_enabled    = true
   visibility_timeout_seconds = 910
+  tags = var.tags
 }
 
 resource "aws_sqs_queue_redrive_allow_policy" "esf-replay-queue-dlq-redrive-allow-policy" {
@@ -333,7 +382,7 @@ resource "aws_sqs_queue_redrive_allow_policy" "esf-replay-queue-dlq-redrive-allo
 }
 
 resource "aws_sqs_queue" "esf-replay-queue" {
-  name                       = "${var.lambda-name}-replay-queue"
+  name                       = "${var.service-shortname}-${var.environment}-replay-queue"
   delay_seconds              = 0
   sqs_managed_sse_enabled    = true
   visibility_timeout_seconds = 910
@@ -341,4 +390,5 @@ resource "aws_sqs_queue" "esf-replay-queue" {
     deadLetterTargetArn = aws_sqs_queue.esf-replay-queue-dlq.arn
     maxReceiveCount     = 3
   })
+  tags = var.tags
 }

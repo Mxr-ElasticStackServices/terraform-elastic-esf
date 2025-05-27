@@ -5,6 +5,29 @@
  * 2.0.
  */
 
+ variable "tags" {
+  type        = map(string)
+  description = "Tags to assign to resources"
+}
+
+variable "aws_account_id" {
+  description = "aws_account_id"
+  type = string
+  default = ""
+}
+
+variable "environment" {
+  description = "the logical environment"
+  type = string
+  default = ""
+}
+
+variable "service-shortname" {
+  description = "ESF short name"
+  type = string
+  default = "esf"
+}
+
 variable "lambda-name" {
   description = "ESF Lambda function name"
   type        = string
@@ -23,6 +46,7 @@ variable "release-version" {
 variable "aws_region" {
   description = "AWS Region"
   type        = string
+  default     = ""
 }
 
 variable "log_level" {
