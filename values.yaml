@@ -1,0 +1,15 @@
+# Default values for elastic-cloud.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# Pipeline config override values
+
+image:
+  repository: "docker.elastic.co"
+
+maxar:
+  docker:
+    registry: docker.artpro.digitalglobe.com:443
+
+# Namespace where to install components
+namespace: elastic
