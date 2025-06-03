@@ -24,37 +24,17 @@ deploy:
     enableValuesInterpolation: true
     force: false
     helmVersion: '3'
-    namespace: elastic
-    valuesDirectory: values
     runTests: false
     helmTimeout: 300
   deploys:
     int:
-      active: false
+      active: true
       targets:
-        essdev-k8s-commercial-dev:
-          active: false
-          properties:
-            charts:
-              aws-forwarder:
-                active: true
-                path: es-kibana-helm-mon
-                name: terraform-elastic-esf
-                appendNamespace: false
-                values:
-                - values.yaml
-    # Load some extra variables from all sorts of different places
-    #
-    # variables:
-    #   sources:
-    #     sharedservices-commercial:
-    #       type: 'github_file'
-    #       org: 'Mxr-ElasticStackServices'
-    #       repo: 'configs'
-    #       branch: 'main'
-    #       path: 'the-stack/configs.yml'
-    #       clientId: 'github-com'
-    #       # Load for commerical
-    #       filter:
-    #         partition:
-    #         - 'commercial'
+        dg-commercial-dev-01:
+          active: true
+
+# variables:
+#   sources:
+#     local_file:
+#       type: 'file'
+#       path: 'extra-variables.yml'
