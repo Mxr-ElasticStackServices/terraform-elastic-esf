@@ -1,6 +1,9 @@
 pipeline_controls_version: '1.0'
 build:
   api_version: '1.0'
+  languages:
+    terraform:
+      version: '1.5.6'
 config:
   amq:
     enabled: false
