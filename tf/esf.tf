@@ -161,6 +161,12 @@ resource "terraform_data" "curl-dependencies-zip" {
   }
 }
 
+resource "terraform_data" "combine-yaml" {
+  provisioner "local-exec" {
+    command = "./combine.sh"
+  }
+}
+
 resource "aws_s3_object" "dependencies-file" {
   bucket = local.config-bucket-name
   key    = local.dependencies-file
