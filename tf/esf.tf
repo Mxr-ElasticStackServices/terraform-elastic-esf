@@ -13,7 +13,7 @@ locals {
   attach_network_policy = (var.vpc != null ? true : false)
 
   config-bucket-name = var.config-file-bucket == "" ? (
-    "${var.lambda-name}-config-bucket"
+    "${var.service-shortname}-${var.environment}-config-bucket"
     ) : (
     split(":", var.config-file-bucket)[length(split(":", var.config-file-bucket)) - 1]
   )
@@ -334,7 +334,7 @@ resource "aws_lambda_event_source_mapping" "esf-event-source-mapping-continuing-
 }
 
 resource "aws_sqs_queue" "esf-continuing-queue-dlq" {
-  name                       = "${var.lambda-name}-continuing-queue-dlq"
+  name                       = "${var.service-shortname}-${var.environment}-continuing-queue-dlq"
   delay_seconds              = 0
   sqs_managed_sse_enabled    = true
   visibility_timeout_seconds = 910
@@ -351,7 +351,7 @@ resource "aws_sqs_queue_redrive_allow_policy" "esf-continuing-queue-dlq-redrive-
 }
 
 resource "aws_sqs_queue" "esf-continuing-queue" {
-  name                       = "${var.lambda-name}-continuing-queue"
+  name                       = "${var.service-shortname}-${var.environment}-continuing-queue"
   delay_seconds              = 0
   sqs_managed_sse_enabled    = true
   visibility_timeout_seconds = 910
@@ -363,7 +363,7 @@ resource "aws_sqs_queue" "esf-continuing-queue" {
 }
 
 resource "aws_sqs_queue" "esf-replay-queue-dlq" {
-  name                       = "${var.lambda-name}-replay-queue-dlq"
+  name                       = "${var.service-shortname}-${var.environment}-replay-queue-dlq"
   delay_seconds              = 0
   sqs_managed_sse_enabled    = true
   visibility_timeout_seconds = 910
@@ -380,7 +380,7 @@ resource "aws_sqs_queue_redrive_allow_policy" "esf-replay-queue-dlq-redrive-allo
 }
 
 resource "aws_sqs_queue" "esf-replay-queue" {
-  name                       = "${var.lambda-name}-replay-queue"
+  name                       = "${var.service-shortname}-${var.environment}-replay-queue"
   delay_seconds              = 0
   sqs_managed_sse_enabled    = true
   visibility_timeout_seconds = 910
@@ -388,4 +388,5 @@ resource "aws_sqs_queue" "esf-replay-queue" {
     deadLetterTargetArn = aws_sqs_queue.esf-replay-queue-dlq.arn
     maxReceiveCount     = 3
   })
+  tags = var.tags
 }

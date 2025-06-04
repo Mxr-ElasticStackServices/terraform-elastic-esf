@@ -11,9 +11,10 @@ terraform {
 
 
 inputs = {
-  lambda-name = "my-esf-lambda"
+  lambda-name = "esf-test"
   release-version = "lambda-v1.19.0"
   aws_region = "us-east-1"
+  environment = "int"
   tags = {
     CostCenter  = "M210"
     Project     = "P2020"

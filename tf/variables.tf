@@ -10,6 +10,18 @@
   description = "Tags to assign to resources"
 }
 
+variable "environment" {
+  description = "the logical environment"
+  type = string
+  default = ""
+}
+
+variable "service-shortname" {
+  description = "ESF short name"
+  type = string
+  default = "esf"
+}
+
 variable "lambda-name" {
   description = "ESF Lambda function name"
   type        = string
