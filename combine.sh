@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# possible sample input
+# input:
+# 	appName: 'foo'
+# 	env: 'int'
+# 	arn: 'aws:arn'
+
 # Output file name
 output_file="config.yaml"
 

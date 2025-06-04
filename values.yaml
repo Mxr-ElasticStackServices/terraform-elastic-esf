@@ -13,3 +13,16 @@ maxar:
 
 # Namespace where to install components
 namespace: elastic
+
+lambda-name: "my-esf-lambda"
+release-version: "lambda-v1.19.0" # See https://github.com/elastic/elastic-serverless-forwarder/tags
+# config-file-bucket     = "my-esf-bucket" # Uncomment if s3 bucket pre-exists
+# config-file-local-path = "./config.yaml" # Uncomment if local config path is used
+
+aws_region: "us-east-1"
+input:
+  type: "cloudwatch-logs"
+  id: "arn:aws:logs:us-east-1:063868525758:log-group:/aws/eks/essdev/cluster:*"
+  elasticsearch_url: "https://nonprod-kibana.essdev.k8s.us-east-1.dg-commercial-dev-01.satcloud.us"
+  api_key: "MlRyV05wY0IzbG9Ja20xN19acWI6TEpZQkJRX1NRRU9FZWNQZmNHLXJUZw=="
+  es_datastream_name: "logs-esf.cloudwatch-default"

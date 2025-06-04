@@ -9,5 +9,7 @@ terraform {
 }
 
 inputs = {
-
+  lambda-name = "my-esf-lambda"
+  release-version = "lambda-v1.19.0"
+  aws_region = "us-east-1"
 }
