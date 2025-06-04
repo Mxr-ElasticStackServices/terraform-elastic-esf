@@ -162,6 +162,29 @@ resource "aws_s3_bucket" "esf-config-bucket" {
   tags = var.tags
 }
 
+resource "aws_s3_bucket_bucket_acl" "bucket_acl" {
+  bucket = aws_s3_bucket.esf-config-bucket.id 
+  acl    = "private"
+}
+resource "aws_s3_bucket_bucket_logging" "bucket_logging" {
+  bucket = aws_s3_bucket.esf-config-bucket.id  # The bucket you want to log (source bucket)
+
+  target_bucket = data.aws_s3_bucket.s3_logging_bucket.id 
+
+  target_prefix = "s3/${aws_s3_bucket.esf-config-bucket.id}/" 
+}
+resource "aws_s3_bucket" "public_access_block" {
+  bucket = aws_s3_bucket.esf-config-bucket.id
+  block_public_acls       = true  
+  ignore_public_acls      = true  
+  block_public_policy     = true  
+  restrict_public_buckets = true 
+}
+
+data "aws_s3_bucket" "s3_logging_bucket" {
+  bucket = "mxr-gov-aws-access-logs-bucket-${var.aws_account_id}-${var.aws_region}"
+}
+
 resource "aws_s3_object" "config-file" {
   bucket  = local.config-bucket-name
   key     = "config.yaml"
