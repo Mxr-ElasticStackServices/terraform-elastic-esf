@@ -159,6 +159,7 @@ resource "aws_s3_bucket" "esf-config-bucket" {
 
   bucket        = local.config-bucket-name
   force_destroy = true
+  tags = var.tags
 }
 
 resource "aws_s3_object" "config-file" {
@@ -314,6 +315,7 @@ resource "aws_sqs_queue" "esf-continuing-queue-dlq" {
   delay_seconds              = 0
   sqs_managed_sse_enabled    = true
   visibility_timeout_seconds = 910
+  tags = var.tags
 }
 
 resource "aws_sqs_queue_redrive_allow_policy" "esf-continuing-queue-dlq-redrive-allow-policy" {
@@ -334,6 +336,7 @@ resource "aws_sqs_queue" "esf-continuing-queue" {
     deadLetterTargetArn = aws_sqs_queue.esf-continuing-queue-dlq.arn
     maxReceiveCount     = 3
   })
+  tags = var.tags
 }
 
 resource "aws_sqs_queue" "esf-replay-queue-dlq" {
@@ -341,6 +344,7 @@ resource "aws_sqs_queue" "esf-replay-queue-dlq" {
   delay_seconds              = 0
   sqs_managed_sse_enabled    = true
   visibility_timeout_seconds = 910
+  tags = var.tags
 }
 
 resource "aws_sqs_queue_redrive_allow_policy" "esf-replay-queue-dlq-redrive-allow-policy" {

@@ -5,6 +5,11 @@
  * 2.0.
  */
 
+ variable "tags" {
+  type        = map(string)
+  description = "Tags to assign to resources"
+}
+
 variable "lambda-name" {
   description = "ESF Lambda function name"
   type        = string

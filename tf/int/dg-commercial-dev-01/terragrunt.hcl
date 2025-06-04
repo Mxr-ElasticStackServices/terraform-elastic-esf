@@ -8,6 +8,21 @@ terraform {
   source = "../../."
 }
 
+tags = {
+  CostCenter  = "M210"
+  Project     = "P2020"
+  Contact     = "dl-to-use@maxar.com"
+  Environment = "dg-commercial-dev-01"
+  Department  = "IT"
+  Service     = "elastic-aws-forwarder"
+  Team        = "ess"
+  Customer    = "ess"
+  Component   = "esf"
+  GitRepo     = "terraform-elastic-esf"
+  GitOrg      = "Mxr-ElasticStackServices"
+  RunTime     = "24_7"
+}
+
 inputs = {
   lambda-name = "my-esf-lambda"
   release-version = "lambda-v1.19.0"
