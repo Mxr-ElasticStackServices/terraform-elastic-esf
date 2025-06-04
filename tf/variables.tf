@@ -10,6 +10,12 @@
   description = "Tags to assign to resources"
 }
 
+variable "aws_account_id" {
+  description = "aws_account_id"
+  type = string
+  default = "063868525758"
+}
+
 variable "environment" {
   description = "the logical environment"
   type = string
