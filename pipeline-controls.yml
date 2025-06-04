@@ -22,6 +22,16 @@ controls:
   files:
     notifications:
       path: pipeline-notifications.yml
+sources:
+  configs:
+    type: github
+    clientId: github-com
+    org: maxar-infrastructure
+    repo: tbd
+    directory: charts/files
+    branch: main
+    useZip: true
+    initialize: false
 deploy:
   properties:
     enableValuesInterpolation: true
