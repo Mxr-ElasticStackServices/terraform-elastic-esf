@@ -163,20 +163,20 @@ resource "aws_s3_bucket" "esf-config-bucket" {
 }
 
 resource "aws_s3_bucket_acl" "bucket_acl" {
-  bucket = aws_s3_bucket.esf-config-bucket.id 
+  bucket = aws_s3_bucket.esf-config-bucket[count.index] 
   acl    = "private"
 }
 
 resource "aws_s3_bucket_logging" "bucket_logging" {
-  bucket = aws_s3_bucket.esf-config-bucket.id  # The bucket you want to log (source bucket)
+  bucket = aws_s3_bucket.esf-config-bucket[count.index]  # The bucket you want to log (source bucket)
 
   target_bucket = data.aws_s3_bucket.s3_logging_bucket.id 
 
-  target_prefix = "s3/${aws_s3_bucket.esf-config-bucket.id}/" 
+  target_prefix = "s3/${aws_s3_bucket.esf-config-bucket[count.index]}/" 
 }
 
 resource "aws_s3_bucket_public_access_block" "public_access_block" {
-  bucket = aws_s3_bucket.esf-config-bucket.id
+  bucket = aws_s3_bucket.esf-config-bucket[count.index]
   block_public_acls       = true  
   ignore_public_acls      = true  
   block_public_policy     = true  
