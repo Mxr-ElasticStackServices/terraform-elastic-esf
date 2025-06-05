@@ -13,7 +13,7 @@
 variable "aws_account_id" {
   description = "aws_account_id"
   type = string
-  default = "063868525758"
+  default = ""
 }
 
 variable "environment" {
@@ -46,6 +46,7 @@ variable "release-version" {
 variable "aws_region" {
   description = "AWS Region"
   type        = string
+  default     = ""
 }
 
 variable "log_level" {

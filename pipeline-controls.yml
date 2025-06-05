@@ -14,8 +14,8 @@ config:
   terraform:
     skip: false
     root: 'tf'
-    short_name: 'ess'
-    service: 'elastic-stack-services'
+    short_name: 'esf'
+    service: 'elastic-aws-forwarder'
     access_groups:
     - 'elastic_ar'
 controls:
