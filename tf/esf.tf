@@ -162,10 +162,18 @@ resource "aws_s3_bucket" "esf-config-bucket" {
   tags = var.tags
 }
 
-resource "aws_s3_bucket_acl" "bucket_acl" {
-  bucket = aws_s3_bucket.esf-config-bucket[0].id 
-  acl    = "private"
-}
+# resource "aws_s3_bucket_ownership_controls" "ownership_controls" {
+#   bucket = aws_s3_bucket.example.id
+#   rule {
+#     object_ownership = "BucketOwnerPreferred"
+#   }
+# }
+
+# resource "aws_s3_bucket_acl" "bucket_acl" {
+#   depends_on = [aws_s3_bucket_ownership_controls.ownership_controls]
+#   bucket = aws_s3_bucket.esf-config-bucket[0].id 
+#   acl    = "private"
+# }
 
 resource "aws_s3_bucket_logging" "bucket_logging" {
   bucket = aws_s3_bucket.esf-config-bucket[0].id  # The bucket you want to log (source bucket)
