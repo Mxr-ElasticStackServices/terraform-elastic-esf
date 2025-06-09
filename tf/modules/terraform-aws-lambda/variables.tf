@@ -1,8 +1,3 @@
- variable "tags" {
-  type        = map(string)
-  description = "Tags to assign to resources"
-}
-
 variable "aws_account_id" {
   description = "aws_account_id"
   type = string
