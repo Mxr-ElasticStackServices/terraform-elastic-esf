@@ -7,6 +7,11 @@
 
 ###### Elastic Serverless Forwarder
 locals {
+  # lambda_zip_path = "${path.module}/lambda-v1.20.1.zip"
+  lambda_zip_path = "lambda-v1.20.1.zip"
+  # You might also calculate the file hash for integrity checks or triggering updates
+  lambda_zip_sha256 = filesha256(local.lambda_zip_path)
+
   dependencies-bucket-url = "http://esf-dependencies.s3.amazonaws.com"
   dependencies-file       = "${var.release-version}.zip"
 
@@ -203,11 +208,12 @@ resource "aws_s3_object" "config-file" {
   depends_on = [aws_s3_bucket.esf-config-bucket]
 }
 
-resource "terraform_data" "curl-dependencies-zip" {
-  provisioner "local-exec" {
-    command = "curl -L -O ${local.dependencies-bucket-url}/${local.dependencies-file}"
-  }
-}
+# NOTE works locally but not in pipeline so trying to pull it in manually
+# resource "terraform_data" "curl-dependencies-zip" {
+#   provisioner "local-exec" {
+#     command = "curl -L -O ${local.dependencies-bucket-url}/${local.dependencies-file}"
+#   }
+# }
 
 resource "terraform_data" "combine-yaml" {
   provisioner "local-exec" {
@@ -220,7 +226,8 @@ resource "aws_s3_object" "dependencies-file" {
   key    = local.dependencies-file
   source = local.dependencies-file
 
-  depends_on = [aws_s3_bucket.esf-config-bucket, terraform_data.curl-dependencies-zip]
+  depends_on = [aws_s3_bucket.esf-config-bucket, local.lambda_zip_path]
+  # depends_on = [aws_s3_bucket.esf-config-bucket, terraform_data.curl-dependencies-zip]
 }
 
 
