@@ -128,7 +128,7 @@ locals {
     major = tonumber(local.release-version-unpacked[0])
     minor = tonumber(local.release-version-unpacked[1])
     patch = tonumber(local.release-version-unpacked[2])
-  }
+  } 
 
   # Select Lambda runtime based on release-version
   #
@@ -232,8 +232,9 @@ resource "aws_s3_object" "dependencies-file" {
 
 
 module "esf-lambda-function" {
-  source  = "terraform-aws-modules/lambda/aws"
-  version = "6.0.0"
+  # source  = "terraform-aws-modules/lambda/aws"
+  # version = "6.0.0"
+  source  = "./modules/terraform-aws-lambda"
 
   function_name = var.lambda-name
   handler       = "main_aws.lambda_handler"
