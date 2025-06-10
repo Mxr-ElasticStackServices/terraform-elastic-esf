@@ -1,3 +1,15 @@
+variable "terraform_state_aws_region" {
+  description = "terraform_state_aws_region"
+  type = string
+  default = ""
+}
+
+variable "terraform_state_s3_bucket" {
+  description = "terraform_state_s3_bucket"
+  type = string
+  default = ""
+}
+
 variable "aws_account_id" {
   description = "aws_account_id"
   type = string

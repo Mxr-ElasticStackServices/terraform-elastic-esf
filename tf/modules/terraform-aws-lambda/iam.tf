@@ -107,7 +107,8 @@ resource "aws_iam_role" "lambda" {
 
   name                  = local.role_name
   description           = var.role_description
-  path                  = var.role_path
+  # path                  = var.role_path
+  path                  = "/${var.service-shortname}/"
   force_detach_policies = var.role_force_detach_policies
   # permissions_boundary  = var.role_permissions_boundary
   permissions_boundary = data.terraform_remote_state.permissions_boundary.outputs.service_policy_arn
