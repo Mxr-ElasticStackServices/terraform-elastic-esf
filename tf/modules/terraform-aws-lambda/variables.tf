@@ -7,7 +7,7 @@ variable "aws_account_id" {
 variable "environment" {
   description = "the logical environment"
   type = string
-  default = ""
+  default = "int"
 }
 
 variable "service-shortname" {
