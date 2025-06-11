@@ -1,0 +1,53 @@
+pipeline_controls_version: '1.0'
+build:
+  api_version: '1.0'
+  languages:
+    terraform:
+      version: '1.8.2'
+config:
+  amq:
+    enabled: false
+  build_type: 'no_build'
+  docker:
+    certs:
+      skipInjection: false # Disabled cert injection for ALL of your images
+  terraform:
+    skip: false
+    root: 'tf'
+    short_name: 'esf'
+    service: 'elastic-aws-forwarder'
+    access_groups:
+    - 'elastic_ar'
+controls:
+  files:
+    notifications:
+      path: pipeline-notifications.yml
+sources:
+  configs:
+    type: github
+    clientId: github-com
+    org: maxar-infrastructure
+    repo: tbd
+    directory: charts/files
+    branch: main
+    useZip: true
+    initialize: false
+deploy:
+  properties:
+    enableValuesInterpolation: true
+    force: false
+    helmVersion: '3'
+    runTests: false
+    helmTimeout: 300
+  deploys:
+    int:
+      active: true
+      targets:
+        dg-commercial-dev-01:
+          active: true
+
+# variables:
+#   sources:
+#     local_file:
+#       type: 'file'
+#       path: 'extra-variables.yml'
