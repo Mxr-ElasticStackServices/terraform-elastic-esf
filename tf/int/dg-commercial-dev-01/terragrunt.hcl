@@ -8,11 +8,9 @@ terraform {
   source = "../../."
 }
 
-
-
 inputs = {
   lambda-name = "esf-test"
-  release-version = "lambda-v1.19.0"
+  release-version = "lambda-v1.20.1"
   aws_region = "us-east-1"
   environment = "int"
   tags = {

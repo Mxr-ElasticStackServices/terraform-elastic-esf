@@ -4,6 +4,15 @@
  * 2.0; you may not use this file except in compliance with the Elastic License
  * 2.0.
  */
+ variable "terraform_state_aws_region" {
+  description = "terraform_state_aws_region"
+  type = string
+}
+
+variable "terraform_state_s3_bucket" {
+  description = "terraform_state_s3_bucket"
+  type = string
+}
 
  variable "tags" {
   type        = map(string)

@@ -15,7 +15,7 @@ maxar:
 namespace: elastic
 
 lambda-name: "my-esf-lambda"
-release-version: "lambda-v1.19.0" # See https://github.com/elastic/elastic-serverless-forwarder/tags
+release-version: "lambda-v1.20.1" # See https://github.com/elastic/elastic-serverless-forwarder/tags
 # config-file-bucket     = "my-esf-bucket" # Uncomment if s3 bucket pre-exists
 # config-file-local-path = "./config.yaml" # Uncomment if local config path is used
 

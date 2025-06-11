@@ -7,6 +7,11 @@
 
 ###### Elastic Serverless Forwarder
 locals {
+  # lambda_zip_path = "${path.module}/lambda-v1.20.1.zip"
+  lambda_zip_path = "lambda-v1.20.1.zip"
+  # You might also calculate the file hash for integrity checks or triggering updates
+  lambda_zip_sha256 = filesha256(local.lambda_zip_path)
+
   dependencies-bucket-url = "http://esf-dependencies.s3.amazonaws.com"
   dependencies-file       = "${var.release-version}.zip"
 
@@ -123,7 +128,7 @@ locals {
     major = tonumber(local.release-version-unpacked[0])
     minor = tonumber(local.release-version-unpacked[1])
     patch = tonumber(local.release-version-unpacked[2])
-  }
+  } 
 
   # Select Lambda runtime based on release-version
   #
@@ -162,10 +167,18 @@ resource "aws_s3_bucket" "esf-config-bucket" {
   tags = var.tags
 }
 
-resource "aws_s3_bucket_acl" "bucket_acl" {
-  bucket = aws_s3_bucket.esf-config-bucket[0].id 
-  acl    = "private"
-}
+# resource "aws_s3_bucket_ownership_controls" "ownership_controls" {
+#   bucket = aws_s3_bucket.example.id
+#   rule {
+#     object_ownership = "BucketOwnerPreferred"
+#   }
+# }
+
+# resource "aws_s3_bucket_acl" "bucket_acl" {
+#   depends_on = [aws_s3_bucket_ownership_controls.ownership_controls]
+#   bucket = aws_s3_bucket.esf-config-bucket[0].id 
+#   acl    = "private"
+# }
 
 resource "aws_s3_bucket_logging" "bucket_logging" {
   bucket = aws_s3_bucket.esf-config-bucket[0].id  # The bucket you want to log (source bucket)
@@ -195,11 +208,12 @@ resource "aws_s3_object" "config-file" {
   depends_on = [aws_s3_bucket.esf-config-bucket]
 }
 
-resource "terraform_data" "curl-dependencies-zip" {
-  provisioner "local-exec" {
-    command = "curl -L -O ${local.dependencies-bucket-url}/${local.dependencies-file}"
-  }
-}
+# NOTE works locally but not in pipeline so trying to pull it in manually
+# resource "terraform_data" "curl-dependencies-zip" {
+#   provisioner "local-exec" {
+#     command = "curl -L -O ${local.dependencies-bucket-url}/${local.dependencies-file}"
+#   }
+# }
 
 resource "terraform_data" "combine-yaml" {
   provisioner "local-exec" {
@@ -212,13 +226,17 @@ resource "aws_s3_object" "dependencies-file" {
   key    = local.dependencies-file
   source = local.dependencies-file
 
-  depends_on = [aws_s3_bucket.esf-config-bucket, terraform_data.curl-dependencies-zip]
+  depends_on = [aws_s3_bucket.esf-config-bucket, local.lambda_zip_path]
+  # depends_on = [aws_s3_bucket.esf-config-bucket, terraform_data.curl-dependencies-zip]
 }
 
 
 module "esf-lambda-function" {
-  source  = "terraform-aws-modules/lambda/aws"
-  version = "6.0.0"
+  # source  = "terraform-aws-modules/lambda/aws"
+  # version = "6.0.0"
+  source  = "./modules/terraform-aws-lambda"
+  terraform_state_s3_bucket = var.terraform_state_s3_bucket
+  terraform_state_aws_region = var.terraform_state_aws_region
 
   function_name = var.lambda-name
   handler       = "main_aws.lambda_handler"
