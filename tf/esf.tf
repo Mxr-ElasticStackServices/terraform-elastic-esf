@@ -235,6 +235,8 @@ module "esf-lambda-function" {
   # source  = "terraform-aws-modules/lambda/aws"
   # version = "6.0.0"
   source  = "./modules/terraform-aws-lambda"
+  terraform_state_s3_bucket = var.terraform_state_s3_bucket
+  terraform_state_aws_region = var.terraform_state_aws_region
 
   function_name = var.lambda-name
   handler       = "main_aws.lambda_handler"
