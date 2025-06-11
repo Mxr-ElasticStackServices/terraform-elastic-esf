@@ -92,15 +92,15 @@ data "aws_iam_policy_document" "assume_role" {
   }
 }
 
-# data "terraform_remote_state" "permissions_boundary" {
-#   backend = "s3"
+data "terraform_remote_state" "permissions_boundary" {
+  backend = "s3"
 
-#   config = {
-#     region = var.terraform_state_aws_region
-#     bucket = var.terraform_state_s3_bucket
-#     key    = "_global/iam-service-centric/service-boundary/terraform.tfstate"
-#   }
-# }
+  config = {
+    region = var.terraform_state_aws_region
+    bucket = var.terraform_state_s3_bucket
+    key    = "_global/iam-service-centric/service-boundary/terraform.tfstate"
+  }
+}
 
 resource "aws_iam_role" "lambda" {
   count = local.create_role ? 1 : 0
@@ -110,8 +110,8 @@ resource "aws_iam_role" "lambda" {
   # path                  = var.role_path
   path                  = "/${var.service-shortname}/"
   force_detach_policies = var.role_force_detach_policies
-  permissions_boundary  = var.role_permissions_boundary
-  # permissions_boundary = data.terraform_remote_state.permissions_boundary.outputs.service_policy_arn
+  # permissions_boundary  = var.role_permissions_boundary
+  permissions_boundary = data.terraform_remote_state.permissions_boundary.outputs.service_policy_arn
   assume_role_policy    = data.aws_iam_policy_document.assume_role[0].json
   max_session_duration  = var.role_maximum_session_duration
 
