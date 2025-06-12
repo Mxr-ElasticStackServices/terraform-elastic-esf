@@ -18,6 +18,7 @@ config:
     service: 'elastic-aws-forwarder'
     access_groups:
     - 'elastic_ar'
+    - 'magnetar_ar'
 controls:
   files:
     notifications:
