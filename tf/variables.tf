@@ -112,11 +112,11 @@ EOT
   id = "arn:aws:logs:us-east-1:063868525758:log-group:/aws/lambda/fido-*"
   outputs = [ {
     type = "elasticsearch"
-    args = [{
+    args = {
       elasticsearch_url = "https://nonprod-kibana.essdev.k8s.us-east-1.dg-commercial-dev-01.satcloud.us"
       api_key = "MlRyV05wY0IzbG9Ja20xN19acWI6TEpZQkJRX1NRRU9FZWNQZmNHLXJUZw=="
       es_datastream_name = "logs-esf.cloudwatch-default"
-    }]
+    }
    }]
   }]
 
