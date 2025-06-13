@@ -13,6 +13,7 @@ inputs = {
   release-version = "lambda-v1.20.1"
   aws_region = "us-east-1"
   environment = "int"
+  config-file-local-path = ".././config.yaml"
   tags = {
     CostCenter  = "M210"
     Project     = "P2020"

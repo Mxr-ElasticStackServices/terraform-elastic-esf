@@ -1,0 +1,18 @@
+inputs:
+- type: "cloudwatch-logs"
+  # id: "arn:aws:logs:%AWS_REGION%:%AWS_ACCOUNT_ID%:log-group:%LOG_GROUP_NAME%:*"
+  id: "arn:aws:logs:us-east-1:063868525758:log-group:/aws/eks/essdev/cluster:*"
+  outputs:
+  - type: "elasticsearch"
+    args:
+      # either elasticsearch_url or cloud_id, elasticsearch_url takes precedence if both are included
+      elasticsearch_url: "https://nonprod-kibana.essdev.k8s.us-east-1.dg-commercial-dev-01.satcloud.us"
+      # cloud_id: ""
+      # either api_key or username/password, username/password takes precedence if both are included
+      api_key: "MlRyV05wY0IzbG9Ja20xN19acWI6TEpZQkJRX1NRRU9FZWNQZmNHLXJUZw=="
+      # username: "username"
+      # password: "password"
+      es_datastream_name: "logs-esf.cloudwatch-default"
+      es_dead_letter_index: "esf-dead-letter-index"
+      batch_max_actions: 500
+      batch_max_bytes: 10485760
