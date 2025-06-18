@@ -27,5 +27,6 @@ inputs = {
     GitRepo     = "terraform-elastic-esf"
     GitOrg      = "Mxr-ElasticStackServices"
     RunTime     = "24_7"
+    Service     = "esf"
   }
 }

@@ -137,7 +137,8 @@ data "aws_iam_policy_document" "logs" {
     actions = compact([
       !var.use_existing_cloudwatch_log_group && var.attach_create_log_group_permission ? "logs:CreateLogGroup" : "",
       "logs:CreateLogStream",
-      "logs:PutLogEvents"
+      "logs:PutLogEvents",
+      "logs:PutSubscriptionFilter"
     ])
 
     resources = flatten([for _, v in ["%v:*", "%v:*:*"] : format(v, local.log_group_arn)])
